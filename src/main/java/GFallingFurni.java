@@ -36,7 +36,7 @@ import java.util.logging.LogManager;
 @ExtensionInfo(
         Title = "GFallingFurni",
         Description = "Advanced extension, so enjoy it :)",
-        Version = "1.3.3",
+        Version = "1.3.4",
         Author = "Julianty"
 )
 
@@ -224,28 +224,30 @@ public class GFallingFurni extends ExtensionForm implements NativeKeyListener {
 
     private void InWiredMovements(HMessage hMessage) {
         if ("---ON---".equals(buttonStart.getText())) {
-            int count = hMessage.getPacket().readInteger();
-            for (int i = 0; i < count; i++) {
-                hMessage.getPacket().readInteger();
-                hMessage.getPacket().readInteger();
-                hMessage.getPacket().readInteger();
-                int x = hMessage.getPacket().readInteger();
-                int y = hMessage.getPacket().readInteger();
-                hMessage.getPacket().readString();
-                hMessage.getPacket().readString();
-                int furnitureId = hMessage.getPacket().readInteger();
-                hMessage.getPacket().readInteger();
-                hMessage.getPacket().readInteger();
+            try {
+                int count = hMessage.getPacket().readInteger();
+                for (int i = 0; i < count; i++) {
+                    hMessage.getPacket().readInteger();
+                    hMessage.getPacket().readInteger();
+                    hMessage.getPacket().readInteger();
+                    int x = hMessage.getPacket().readInteger();
+                    int y = hMessage.getPacket().readInteger();
+                    hMessage.getPacket().readString();
+                    hMessage.getPacket().readString();
+                    int furnitureId = hMessage.getPacket().readInteger();
+                    hMessage.getPacket().readInteger();
+                    hMessage.getPacket().readInteger();
 
-                if (listPoisonFurniture.contains(furnitureId)) {
-                    continue;
+                    if (listPoisonFurniture.contains(furnitureId)) {
+                        continue;
+                    }
+
+                    xFurniture = x;
+                    yFurniture = y;
+
+                    sitOnTheChair(furnitureId);
                 }
-
-                xFurniture = x;
-                yFurniture = y;
-
-                sitOnTheChair(furnitureId);
-            }
+            } catch (Exception ignored) { }
         }
     }
 
@@ -401,22 +403,21 @@ public class GFallingFurni extends ExtensionForm implements NativeKeyListener {
 
     private void InUserUpdate(HMessage hMessage) {
         HPacket hPacket = hMessage.getPacket();
-        for (HEntityUpdate hEntityUpdate: HEntityUpdate.parse(hPacket)){
-            try {
+        try {
+            for (HEntityUpdate hEntityUpdate : HEntityUpdate.parse(hPacket)) {
                 int currentIndex = hEntityUpdate.getIndex();
                 // if(yourIndex == currentIndex && checkAutoDisable.isSelected())
-                if(yourIndex != currentIndex || !cbAutoDisable.isSelected()) continue;
+                if (yourIndex != currentIndex || !cbAutoDisable.isSelected()) continue;
                 HPoint currentHPoint = new HPoint(hEntityUpdate.getMovingTo().getX(), hEntityUpdate.getMovingTo().getY());
 
-                if((xFurniture == currentHPoint.getX() && yFurniture == currentHPoint.getY()) ||
+                if ((xFurniture == currentHPoint.getX() && yFurniture == currentHPoint.getY()) ||
                         (hPointFreeWalkTo.getX() == currentHPoint.getX() && hPointFreeWalkTo.getY() == currentHPoint.getY()) ||
-                        (xSpecificPoint == currentHPoint.getX() && ySpecificPoint == currentHPoint.getY())){
+                        (xSpecificPoint == currentHPoint.getX() && ySpecificPoint == currentHPoint.getY())) {
                     Platform.runLater(this::turnOffButton);
                     break;
                 }
             }
-            catch (Exception ignored) { }
-        }
+        } catch (Exception ignored) { }
     }
 
     private void InExpression(HMessage hMessage) {

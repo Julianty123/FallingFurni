@@ -1,3 +1,5 @@
+![Stars](https://img.shields.io/github/stars/Julianty123/FallingFurni)
+
 ### ❤️ Support me ❤️
 If you like my work, please consider supporting me. It will help me create more projects and continue maintain them.
 
